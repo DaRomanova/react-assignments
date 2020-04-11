@@ -1,81 +1,80 @@
-import React, { Component } from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
-import { DISHES } from '../shared/dishes';
+import React from 'react';
+import { Card, CardImg, CardText, CardBody, CardTitle, BreadcrumbItem, Breadcrumb } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 
-class DishDetail extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            dishlist: DISHES
-        }
-    }
+function RenderDish({dish}) {
+    return (
+        <Card>
+            <CardImg top src={dish.image} alt={dish.name} />
+            <CardBody>
+                <CardTitle heading>{dish.name}</CardTitle>
+                <CardText>{dish.description}</CardText>
+            </CardBody>
+        </Card>
+    );
+}
 
-    renderDish(dish) {
-        return (
-            <Card>
-                <CardImg top src={dish.image} alt={dish.name} />
-                <CardBody>
-                    <CardTitle heading>{dish.name}</CardTitle>
-                    <CardText>{dish.description}</CardText>
-                </CardBody>
-            </Card>
+function RenderComments({comments}){
+    if(comments != null){
+
+        let options = {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        };
+        return(
+            <div>
+                <h4>Comments</h4>
+                <ul class="list-unstyled">
+                {comments.map((comment) => {
+                    return(
+                        <div key={comment.id}>
+                                <li>{comment.comment} </li>
+                                <li>-- {comment.author} ,     { new Date(comment.date).toLocaleString('en-us', options)}</li>         
+                        </div>
+                    );
+                })}
+            </ul>
+            </div>
         );
     }
-
-    renderComments(com){
-        if(com != null){
-
-            var ddd ;
-            let options = {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            };
-
-            const comlist = com.map((com) => {
-                return(
-                    <div key={com.id}>
-                        <ul class="list-unstyled">
-                            <li>{com.comment} </li>
-                            <li>-- {com.author} ,     {ddd = new Date(com.date), ddd.toLocaleString('en-us', options)}</li>
-                        </ul>
-                    </div>
-                );
-            });
-
-            return(
-                <div>
-                    <h4>Comments</h4>
-                    {comlist}
-                </div>
-            );
-        }
-        else{
-            return(
-                <div></div>
-            );
-        }
+    else{
+        return(
+            <div></div>
+        );
     }
+}
 
-    render() {
-        if (this.props.selectedDish != null) {
-            return (
+const DishDetail = (props) => {
+    if (props.dish != null) {
+        return (
+            <div class="container">
+                <div className="row">
+                    <Breadcrumb>
+                        <BreadcrumbItem><Link to='/menu'>Menu</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>{props.dish.name}</BreadcrumbItem>
+                    </Breadcrumb>
+                    <div className="col-12">
+                        <h3>{props.dish.name}</h3>
+                        <hr />
+                    </div>
+                </div>
                 <div  className="row">
                     <div className="col-12 col-md-5 m-1">
-                        {this.renderDish(this.props.selectedDish)}
+                        <RenderDish dish={props.dish} />
                     </div>
                     <div className="col-12 col-md-5 m-1">
-                        {this.renderComments(this.state.dishlist[this.props.selectedDish.id].comments)}  
+                        <RenderComments comments={props.comments} /> 
                     </div>
                 </div>
-            );
-        }
-        else {
-            return(
-                <div></div>
-            );
-        }
+            </div>
+        );
+    }
+    else {
+        return(
+            <div></div>
+        );
     }
 }
 
